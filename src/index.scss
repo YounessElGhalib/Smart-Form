@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.conversation {
+  scrollbar-color: rgba(54, 80, 64, 0.3) transparent;
+  scrollbar-width: thin;
+}
