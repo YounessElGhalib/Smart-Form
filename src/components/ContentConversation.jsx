@@ -1,4 +1,5 @@
 import Message from "./Message.jsx";
+import IsTaping from "./ui/IsTaping.jsx";
 import { debounce } from "lodash";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -61,17 +62,19 @@ export default function ContentConversation({ sendInputMsg = "" }) {
           <Box>
             {isLoading && (
               <Fade in={isLoading}>
-                <span>Taping...</span>
+                <span>
+                  <IsTaping taping={isLoading} />
+                </span>
               </Fade>
             )}
             {!isLoading && (
               <Fade in={!isLoading}>
-                <div>
+                <span>
                   <Message
                     key={fakeForm[idxMsg].id}
                     message={fakeForm[idxMsg].message}
                   />
-                </div>
+                </span>
               </Fade>
             )}
           </Box>
@@ -87,7 +90,7 @@ export default function ContentConversation({ sendInputMsg = "" }) {
     idxMsg < fakeForm.length - 1 ? setIdxMsg((i) => i + 1) : setIsEnded(true);
     debounce(() => {
       setIsLoading(false);
-    }, 1500)();
+    }, 2000)();
   }
 
   const scrollToBottom = () => {
