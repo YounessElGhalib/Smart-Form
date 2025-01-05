@@ -1,11 +1,10 @@
 import Message from "./Message.jsx";
 import { debounce } from "lodash";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setKeyName } from "../stores/createAccountSlice";
 import Box from "@mui/material/Box";
 import Fade from "@mui/material/Fade";
-import Paper from "@mui/material/Paper";
 
 export default function ContentConversation({ sendInputMsg = "" }) {
   const dispatch = useDispatch();
@@ -16,6 +15,7 @@ export default function ContentConversation({ sendInputMsg = "" }) {
   const [isEnded, setIsEnded] = useState(true);
   const [currentMsg, setCurrentMsg] = useState(null);
   const [list, setList] = useState([]);
+  const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (sendInputMsg) nextMes(sendInputMsg);
@@ -23,6 +23,7 @@ export default function ContentConversation({ sendInputMsg = "" }) {
 
   useEffect(() => {
     setCurrentMessage();
+    scrollToBottom();
   }, [isEnded, idxMsg, isLoading]);
 
   useEffect(() => {
@@ -57,18 +58,22 @@ export default function ContentConversation({ sendInputMsg = "" }) {
     setCurrentMsg(
       isEnded ? null : (
         <div key={fakeForm[idxMsg].id}>
-          <Box className="p-0 relative">
-            <Fade className="absolute" in={isLoading}>
-              <span>Taping...</span>
-            </Fade>
-            <Fade className="absolute" in={!isLoading}>
-              <span>
-                <Message
-                  key={fakeForm[idxMsg].id}
-                  message={fakeForm[idxMsg].message}
-                />
-              </span>
-            </Fade>
+          <Box>
+            {isLoading && (
+              <Fade in={isLoading}>
+                <span>Taping...</span>
+              </Fade>
+            )}
+            {!isLoading && (
+              <Fade in={!isLoading}>
+                <div>
+                  <Message
+                    key={fakeForm[idxMsg].id}
+                    message={fakeForm[idxMsg].message}
+                  />
+                </div>
+              </Fade>
+            )}
           </Box>
         </div>
       )
@@ -85,10 +90,15 @@ export default function ContentConversation({ sendInputMsg = "" }) {
     }, 1500)();
   }
 
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <div className="w-full h-[440px] p-4 overflow-y-auto">
+    <div className="w-full h-[440px] p-4 overflow-y-auto conversation">
       {list}
       {currentMsg}
+      <div className="py-4" ref={messagesEndRef} />
     </div>
   );
 }
